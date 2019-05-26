@@ -1,0 +1,53 @@
+set FABRYKI := F1 F2;
+set MAGAZYNY := M1 M2;
+set KLIENCI := K1 K2;
+set Z_FM := F1 F2 M1 M2;
+set DO_MK := M1 M2 K1 K2;
+
+param: DYSTRYBUCJA: koszty_dystrybucji_oczekiwane: M1 M2 K1 K2 :=
+	F1  0.5  .    0.943838101341753   1.78133314389023 
+	F2  .    0.3  1.78133314389023    .
+	M1  .    .    .                   0.973343413932001
+	M2  .    .    1.18749703591776    1.56462547153112
+;
+
+param: PUSTE_POLA: puste_pola:  M1 M2 K1 K2 :=
+	F1  .    0    .    .
+	F2  0    .    .    0
+	M1  0    0    0    .
+	M2  0    0    .    .
+;
+
+param max_produkcja_fabryk := 
+	F1 150
+	F2 200
+;
+
+param polowa_mozliwosci_fabryk :=
+	F1 75
+	F2 100
+;
+
+param max_magazynow :=
+	M1 110
+	M2 150
+;
+
+param zapotrzebowanie_klientow := 
+	K1 130
+	K2 90
+;
+
+param kara_malej_produkcji = 50;
+param prawd_scenariusza = 0.001;
+
+for{s in SCENARIUSZE}{
+	let koszty_dystrybucji_scenariusze["F1", "M1", s] := 0.5;
+	let koszty_dystrybucji_scenariusze["F1", "K1", s] := scenariuszeR[s, "R1"];
+	let koszty_dystrybucji_scenariusze["F1", "K2", s] := scenariuszeR[s, "R4"];
+	let koszty_dystrybucji_scenariusze["F2", "M2", s] := 0.3;
+	let koszty_dystrybucji_scenariusze["F2", "K1", s] := scenariuszeR[s, "R2"];
+	let koszty_dystrybucji_scenariusze["M1", "K2", s] := scenariuszeR[s, "R5"];
+	let koszty_dystrybucji_scenariusze["M2", "K1", s] := scenariuszeR[s, "R3"];
+	let koszty_dystrybucji_scenariusze["M2", "K2", s] := scenariuszeR[s, "R6"];
+};

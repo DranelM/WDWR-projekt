@@ -1,0 +1,38 @@
+
+# minimalny koszt #
+options solver cplex;
+model zad2.mod;
+data scenariusze.dat;
+data zad2.dat;
+
+set WARTOSCI = {"KOSZT", "RYZYKO"};
+param wyniki {WARTOSCI};
+
+minimize min_koszt: koszt_oczekiwany;
+solve;
+
+let wyniki["KOSZT"] := koszt_oczekiwany;
+let wyniki["RYZYKO"] := ryzyko;
+
+printf "\n== Minimalny Koszt ==\n Koszt: %f \n Ryzyko: %f\n======================\n", koszt_oczekiwany, ryzyko;
+printf "\n== Minimalny Koszt ==\n Koszt: %f \n Ryzyko: %f\n======================\n", koszt_oczekiwany, ryzyko > minimalny_koszt.txt;
+
+reset;
+
+# minimalne ryzyko #
+options solver cplex;
+model zad2.mod;
+data scenariusze.dat;
+data zad2.dat;
+
+set WARTOSCI = {"KOSZT", "RYZYKO"};
+param wyniki {WARTOSCI};
+
+minimize min_ryzyko: ryzyko;
+solve;
+
+let wyniki["KOSZT"] := koszt_oczekiwany;
+let wyniki["RYZYKO"] := ryzyko;
+
+printf "\n== Minimalne Ryzyko ==\n Koszt: %f \n Ryzyko: %f\n======================\n", koszt_oczekiwany, ryzyko;
+printf "\n== Minimalne Ryzyko ==\n Koszt: %f \n Ryzyko: %f\n======================\n", koszt_oczekiwany, ryzyko > minimalne_ryzyko.txt;

@@ -1,0 +1,30 @@
+options solver cplex;
+model zad2.mod;
+data scenariusze.dat;
+data zad2.dat;
+
+minimize cel: waga_koszt_ryzyko*koszt_oczekiwany + (1-waga_koszt_ryzyko)*ryzyko;
+
+param n = 1000;
+set WYNIKI = {0..n};
+set WARTOSCI = {"KOSZT", "RYZYKO", "CEL"};
+param wyniki {WYNIKI, WARTOSCI};
+
+
+for {i in WYNIKI} {
+	let waga_koszt_ryzyko := i*0.001;
+	solve cel;
+
+	let wyniki[i, "KOSZT"] := koszt_oczekiwany;
+	let wyniki[i, "RYZYKO"] := ryzyko;
+	let wyniki[i, "CEL"] := cel;
+	printf "\n=====================\n Iteracja %d \n=====================\n", i;
+};
+
+for {i in WYNIKI} {
+	printf "%f \n", wyniki[i, "KOSZT"] > koszt.txt;
+	printf "%f \n", wyniki[i, "RYZYKO"] > ryzyko.txt;
+	printf "%f \n", wyniki[i, "CEL"] > cel.txt;
+}
+
+display wyniki > wyniki.txt;

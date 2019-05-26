@@ -1,0 +1,7 @@
+options solver cplex;
+model zad1.mod;
+data zad1.dat;
+solve;
+
+printf "\nKoszt Oczekiwany: %f\n", koszt_oczekiwany;
+display dystrybucja;

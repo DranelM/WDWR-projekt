@@ -1,0 +1,40 @@
+options solver cplex;
+model zad2.mod;
+data scenariusze.dat;
+data zad2.dat;
+
+
+param n = 1000;
+set WYNIKI = {0..n};
+set WARTOSCI = {"GRANICA", "KOSZT", "RYZYKO"};
+param wyniki {WYNIKI, WARTOSCI};
+
+param koszt_utopia = 391.89;
+param koszt_nadir = 295.95;
+param koszt_dystans = koszt_utopia - koszt_nadir;
+param krok = koszt_dystans / n;
+
+param iterator;
+let iterator := 0;
+
+s.t. granica_kosztu : koszt_oczekiwany <= koszt_utopia - krok*iterator;
+
+minimize cel: ryzyko;
+
+for {i in WYNIKI} {
+
+	solve;
+
+	let wyniki[i, "GRANICA"] := koszt_utopia - krok*iterator;
+	let wyniki[i, "KOSZT"] := koszt_oczekiwany;
+	let wyniki[i, "RYZYKO"] := ryzyko;
+	printf "\n=====================\n Iteracja %d \n=====================\n", i;
+	let iterator := i;
+}
+
+printf {i in WYNIKI} "granica: %f    koszt: %f   ryzyko: %f\n", wyniki[i, "GRANICA"], wyniki[i, "KOSZT"] , wyniki[i, "RYZYKO"] > WYNIKI.txt; 
+
+for {i in WYNIKI} {
+	printf "%f \n", wyniki[i, "KOSZT"] > koszt.txt;
+	printf "%f \n", wyniki[i, "RYZYKO"] > ryzyko.txt;
+}
